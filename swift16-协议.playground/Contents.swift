@@ -127,23 +127,145 @@ var d6 = Dice(sides: 6, generator:ooo)
 print("Random dice roll is \(d6.roll())")
 
 // 6、委托
+protocol DiceGame {
+    var dice: Dice { get }
+    func play()
+}
+protocol DiceGameDelegate {
+    func gameDidStart(_ game: DiceGame)
+    func game(_ game: DiceGame, didStartNewTurnWithDiceRoll diceRoll: Int)
+    func gameDidEnd(_ game: DiceGame)
+}
 
 // 7、扩展里面添加协议
+protocol TextRepresentable {
+    var textualDescription: String { get }
+}
+
+extension Dice:TextRepresentable {
+    var textualDescription: String{
+        return "a \(sides)-sides dice"
+    }
+}
+
+let d12 = Dice(sides: 12, generator: LinearCongruentialGenerator())
+print(d12.textualDescription)
+
 
 // 8、有条件的遵循协议
+// 下面的扩展让 Array 类型只要在存储遵循 TextRepresentable 协议的元素时就遵循 TextRepresentable 协议。
+extension Array : TextRepresentable where Element: TextRepresentable {
+    var textualDescription: String{
+        let itemsAsText = self.map { $0.textualDescription }
+        return "[" + itemsAsText.joined(separator: ", ") + "]"
+    }
+}
+let myDice = [d12, d6]
+print(myDice.textualDescription)
 
 // 9、扩展里声明采纳协议
+struct Hamster {
+    var name:String
+    var textualDescription: String {
+        return "a hamster named \(name)"
+    }
+}
+extension Hamster: TextRepresentable {}
+let simonTheHamster = Hamster(name: "Simon")
+print(simonTheHamster.textualDescription)
 
 // 10、协议类型的集合
+let things:[TextRepresentable] = [d12, d6, simonTheHamster]
+
+for thing in things {
+    print(thing.textualDescription)
+}
 
 // 11、协议的继承
+//继承自一个协议的另一个协议
+protocol PrettyTextRepresentable: TextRepresentable {
+    var prettyTextualDescription: String { get }
+}
+
 
 // 12、类专属的协议
+// 添加 AnyObject 就规定协议只能被类遵守
+//protocol SomeClassOnlyProtocol: AnyObject, SomeInheritedProtocol {
+//    // 这里是类专属协议的定义部分
+//}
 
 // 13、协议合成
+// 用 & 将协议组合起来
+protocol Named13 {
+    var name: String { get }
+}
+protocol Aged13 {
+    var age: Int { get }
+}
+struct Person13: Named13, Aged13 {
+    var name: String
+    var age: Int
+}
+func wishHappyBirthday(to celebrator: Named13 & Aged13) {
+    print("Happy birthday, \(celebrator.name), you're \(celebrator.age)!")
+}
+let birthdayPerson = Person13(name: "Malcolm", age: 21)
+wishHappyBirthday(to: birthdayPerson)
+
+// 定位
+class Location {
+    var latitude: Double
+    var longitude: Double
+    init(latitude: Double, longitude: Double) {
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+}
+class City: Location, Named13 {
+    var name: String
+    init(name: String, latitude: Double, longitude: Double) {
+        self.name = name
+        super.init(latitude: latitude, longitude: longitude)
+    }
+}
+// 接收一个类型为 location & nameed13 类型的参数
+func beginConcert(in location: Location & Named13) {
+    print("Hello, this is \(location.name)!")
+}
+let seattle = City(name: "Seattle", latitude: 47.6, longitude: -122.3)
+beginConcert(in: seattle)
 
 // 14、检查协议一致性
+//
+protocol HasArea {
+    var area: Double { get }
+}
 
-// 15、可选协议要求
+class Circle: HasArea {
+    let pi = 3.1415927
+    var radius: Double
+    var area: Double { return pi * radius * radius }
+    init(radius: Double) {
+        self.radius = radius
+    }
+}
+class Country: HasArea {
+    var area: Double
+    init(area: Double) {
+        self.area = area
+    }
+}
+class Animal {
+    var legs: Int
+    init(legs: Int) { self.legs = legs }
+}
 
-// 16、协议扩展
+let objects:[AnyObject] = [Circle(radius: 2.0), Country(area: 243_610), Animal(legs: 4)]
+
+for object in objects {
+    if let obWithArea = object as? HasArea {
+        print("area is \(obWithArea.area)")
+    }else {
+        print("something doesnt have an area: \(object)")
+    }
+}
