@@ -79,6 +79,7 @@ for index in 0..<2 {
     print("wori - \(index)")
 }
 let names = ["a", "b", "c", "d"]
+
 for name in names[2...] {
     print("1 -- \(name)")
 }

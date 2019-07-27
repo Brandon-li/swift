@@ -155,6 +155,7 @@ for (key, value) in airports {
     print("key is \(key), value is \(value)")
 }
 
+
 for airportCode in airports.keys {
     print("key is : \(airportCode)")
 }

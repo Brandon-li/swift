@@ -4,6 +4,7 @@ import UIKit
 // 0、常量和变量
 var current0 = 1.0
 var welcomeMessage: String
+
 let 🐶🐮 = "dogcow"
 
 print(🐶🐮)

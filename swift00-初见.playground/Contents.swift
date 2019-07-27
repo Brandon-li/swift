@@ -606,4 +606,5 @@ func makeArrayaaa(repeating: Int, items: Int) ->[Int] {
     return result
 }
 
+
 print(makeArrayaaa(repeating: 1, items: 3))

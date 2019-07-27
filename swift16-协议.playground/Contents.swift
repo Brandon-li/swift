@@ -249,6 +249,7 @@ class Circle: HasArea {
         self.radius = radius
     }
 }
+
 class Country: HasArea {
     var area: Double
     init(area: Double) {

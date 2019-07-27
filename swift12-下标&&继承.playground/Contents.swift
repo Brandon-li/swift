@@ -101,6 +101,7 @@ car.currentSpeed = 50.0
 car.gear = 3
 print("car: \(car.description)")
 
+
 // 重写属性观察器
 class AutomaticCar: Car {
     override var currentSpeed: Double {

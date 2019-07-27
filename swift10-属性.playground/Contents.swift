@@ -116,6 +116,7 @@ enum SomeEnumeration {
         return 6
     }
 }
+
 class SomeClass {
     static var storedTypeProperty = "Some value."
     static var computedTypeProperty: Int {

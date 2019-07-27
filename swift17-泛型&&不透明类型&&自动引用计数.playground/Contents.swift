@@ -86,6 +86,7 @@ protocol Container {
     subscript(i: Int) -> Item { get }
 }
 
+
 struct IntStack: Container {
     // IntStack 的原始实现部分
     var items = [Int]()
@@ -355,8 +356,43 @@ class City {
     }
 }
 var country = Country(name: "Canada", capitalName: "Ottawa")
-print("\(country.name)'s capital city is called \(country.capitalCity.name)")
+print("\(country.name)'s capital city is called \(country.capitalCity.name) \n")
 
 
 // 闭包的循环引用~
-// 闭包捕获列表~
+class HTMLElement {
+    let name:String
+    let text:String?
+
+    lazy var asHTML: ()->String = {
+        [unowned self] in
+        if let text = self.text {
+            return "<\(self.name)>\(text)</\(self.name)>"
+        }else {
+            return "<\(self.name) />"
+        }
+    }
+
+    init(name:String, text:String? = nil) {
+        self.name = name
+        self.text = text
+    }
+
+    deinit {
+        print("\(name) is being deinitialized ~")
+    }
+}
+
+let heading = HTMLElement(name: "h1")
+let defaultText = "some default text"
+heading.asHTML = {
+    return "<\(heading.name)>\(heading.text ?? defaultText)</\(heading.name)>"
+}
+print(heading.asHTML())
+
+var paragraph: HTMLElement? = HTMLElement(name: "p", text: "hello, world")
+print(paragraph!.asHTML())
+
+paragraph = nil
+
+print("\n")
